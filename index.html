@@ -1,0 +1,586 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>MGMT 512 — Practice Test</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Monoton&family=Orbitron:wght@400;600;800;900&family=Rajdhani:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --pink:#ff2d95;--pink-soft:#ff6ec7;--cyan:#00f0ff;--cyan-soft:#6ffff4;--purple:#9b4dff;
+  --sun1:#ffd36e;--sun2:#ff5e8a;--bg0:#120024;--bg1:#1b0538;
+  --card:rgba(25,6,54,0.72);--card-edge:rgba(0,240,255,0.35);
+  --ink:#f3e9ff;--ink-dim:#c6a9e8;--good:#17f0a0;--bad:#ff4d6d;
+}
+*{box-sizing:border-box}
+html,body{margin:0;padding:0}
+body{font-family:'Rajdhani',system-ui,sans-serif;color:var(--ink);background:var(--bg0);min-height:100vh;position:relative;overflow-x:hidden;font-size:18px;line-height:1.5}
+.backdrop{position:fixed;inset:0;z-index:-2;overflow:hidden;background:linear-gradient(180deg,#1b0538 0%,#2a0750 35%,#3d0a63 55%,#160227 100%)}
+.sun{position:fixed;left:50%;top:14%;transform:translateX(-50%);width:420px;height:420px;z-index:-2;border-radius:50%;
+  background:linear-gradient(180deg,var(--sun1) 0%,#ff9a52 45%,var(--sun2) 100%);box-shadow:0 0 120px 30px rgba(255,94,138,0.45);
+  -webkit-mask-image:repeating-linear-gradient(180deg,#000 0 22px,transparent 22px 30px),linear-gradient(180deg,#000 55%,transparent 92%);
+  mask-image:repeating-linear-gradient(180deg,#000 0 22px,transparent 22px 30px),linear-gradient(180deg,#000 55%,transparent 92%);
+  -webkit-mask-composite:source-in;mask-composite:intersect;opacity:.85}
+.grid{position:fixed;left:-20%;right:-20%;bottom:-10%;height:46vh;z-index:-2;
+  background-image:linear-gradient(rgba(0,240,255,.5) 2px,transparent 2px),linear-gradient(90deg,rgba(255,45,149,.45) 2px,transparent 2px);
+  background-size:60px 60px;transform:perspective(320px) rotateX(68deg);transform-origin:bottom center;
+  -webkit-mask-image:linear-gradient(transparent,#000 60%);mask-image:linear-gradient(transparent,#000 60%)}
+.scan{position:fixed;inset:0;z-index:-1;pointer-events:none;background:repeating-linear-gradient(180deg,rgba(0,0,0,0) 0 3px,rgba(0,0,0,.08) 3px 4px)}
+.wrap{max-width:900px;margin:0 auto;padding:28px 18px 80px}
+header{text-align:center;margin:18px 0 10px}
+.kicker{font-family:'Orbitron';letter-spacing:.42em;font-size:.72rem;color:var(--cyan);text-transform:uppercase;margin-bottom:6px;text-shadow:0 0 10px rgba(0,240,255,.8)}
+h1{font-family:'Monoton';font-weight:400;font-size:clamp(2.3rem,8vw,4.4rem);margin:0;line-height:1;color:var(--pink-soft);
+  text-shadow:0 0 8px var(--pink),0 0 22px var(--pink),0 2px 0 #5a0b3a,0 0 40px rgba(255,45,149,.6)}
+.sub{font-family:'Orbitron';font-size:clamp(.8rem,2.4vw,1.05rem);letter-spacing:.14em;margin-top:10px;color:var(--cyan-soft);text-transform:uppercase;text-shadow:0 0 10px rgba(0,240,255,.5)}
+.sub b{color:#fff}
+.card{background:var(--card);border:1px solid var(--card-edge);border-radius:16px;padding:20px 20px 22px;margin:20px 0;
+  box-shadow:0 0 0 1px rgba(255,45,149,.15),0 14px 40px rgba(0,0,0,.45),inset 0 0 30px rgba(155,77,255,.12);backdrop-filter:blur(3px)}
+.section-tag{display:inline-block;font-family:'Orbitron';font-weight:800;font-size:.72rem;letter-spacing:.2em;padding:5px 12px;border-radius:999px;text-transform:uppercase;background:linear-gradient(90deg,var(--pink),var(--purple));color:#fff;box-shadow:0 0 16px rgba(255,45,149,.6)}
+.section-h{font-family:'Orbitron';font-weight:800;font-size:1.5rem;margin:10px 0 2px;color:#fff;text-shadow:0 0 14px rgba(0,240,255,.4)}
+.section-note{color:var(--ink-dim);font-size:.95rem;margin:6px 0}
+
+/* progress */
+.progwrap{position:sticky;top:0;z-index:5;padding:10px 0 12px;margin-bottom:2px;background:linear-gradient(180deg,rgba(18,0,36,.92),rgba(18,0,36,.55));backdrop-filter:blur(6px)}
+.progmeta{display:flex;justify-content:space-between;align-items:baseline;font-family:'Orbitron';letter-spacing:.08em;text-transform:uppercase;margin-bottom:7px}
+.progmeta .pl{font-size:.78rem;color:var(--pink-soft)}
+.progmeta .pc{font-size:.72rem;color:var(--cyan)}
+.progbar{height:10px;border-radius:999px;background:rgba(10,2,26,.7);border:1px solid rgba(0,240,255,.3);overflow:hidden}
+.progfill{height:100%;width:0;background:linear-gradient(90deg,var(--cyan),var(--pink));box-shadow:0 0 14px rgba(255,45,149,.6);transition:width .3s}
+
+/* questions */
+.q{padding:4px 0}
+.q .stem{font-weight:600;font-size:1.22rem;margin-bottom:16px;color:#fff;line-height:1.35}
+.opts{display:grid;gap:10px}
+.opt{display:flex;gap:10px;align-items:flex-start;padding:13px 14px;border:1px solid rgba(155,77,255,.35);border-radius:10px;cursor:pointer;transition:.15s;background:rgba(10,2,26,.4)}
+.opt:hover{border-color:var(--cyan);box-shadow:0 0 14px rgba(0,240,255,.25)}
+.opt input{margin-top:4px;accent-color:var(--pink);transform:scale(1.25)}
+.opt .lab{font-family:'Orbitron';font-weight:700;color:var(--pink-soft);font-size:.9rem;min-width:18px}
+.opt .txt{flex:1}
+.opt.correct{border-color:var(--good);background:rgba(23,240,160,.12);box-shadow:0 0 14px rgba(23,240,160,.3)}
+.opt.incorrect{border-color:var(--bad);background:rgba(255,77,109,.12)}
+.opt .mark{margin-left:auto;font-weight:800;font-family:'Orbitron';font-size:.78rem;white-space:nowrap}
+.opt.correct .mark{color:var(--good)}
+.opt.incorrect .mark{color:var(--bad)}
+.num{font-family:'Orbitron';font-weight:800;color:var(--cyan);margin-right:8px}
+
+textarea.sa{width:100%;min-height:200px;resize:vertical;background:rgba(10,2,26,.55);color:var(--ink);border:1px solid rgba(0,240,255,.35);border-radius:10px;padding:14px;font-family:'Rajdhani';font-size:1.05rem}
+textarea.sa:focus{outline:none;border-color:var(--pink);box-shadow:0 0 14px rgba(255,45,149,.35)}
+.model{margin-top:12px;border-left:3px solid var(--cyan);background:rgba(0,240,255,.08);padding:10px 14px;border-radius:0 10px 10px 0}
+.model h4{margin:0 0 6px;font-family:'Orbitron';font-size:.8rem;letter-spacing:.12em;color:var(--cyan);text-transform:uppercase}
+.youranswer{margin-top:10px;border-left:3px solid var(--pink);background:rgba(255,45,149,.08);padding:10px 14px;border-radius:0 10px 10px 0;white-space:pre-wrap}
+.youranswer h4{margin:0 0 6px;font-family:'Orbitron';font-size:.78rem;letter-spacing:.12em;color:var(--pink-soft);text-transform:uppercase}
+.selfgrade{margin-top:10px;display:flex;align-items:center;gap:10px;font-family:'Orbitron';font-size:.85rem;color:var(--sun1);cursor:pointer}
+.selfgrade input{transform:scale(1.4);accent-color:var(--good)}
+
+/* matching */
+.match-layout{display:grid;grid-template-columns:1fr 260px;gap:18px}
+@media(max-width:720px){.match-layout{grid-template-columns:1fr}}
+.bank{position:sticky;top:84px;align-self:start;background:rgba(10,2,26,.6);border:1px solid var(--card-edge);border-radius:14px;padding:14px}
+.bank h4{margin:0 0 10px;font-family:'Orbitron';font-size:.78rem;letter-spacing:.14em;color:var(--pink-soft);text-transform:uppercase;text-align:center}
+.chips{display:flex;flex-wrap:wrap;gap:8px}
+.chip{font-family:'Orbitron';font-weight:600;font-size:.76rem;padding:7px 11px;border-radius:999px;cursor:grab;user-select:none;background:linear-gradient(90deg,rgba(0,240,255,.16),rgba(155,77,255,.16));border:1px solid var(--cyan);color:var(--cyan-soft);transition:.15s;box-shadow:0 0 8px rgba(0,240,255,.15)}
+.chip:hover{box-shadow:0 0 14px rgba(0,240,255,.5)}
+.chip.sel{background:var(--pink);color:#fff;border-color:#fff;box-shadow:0 0 18px rgba(255,45,149,.8)}
+.chip.used{text-decoration:line-through;opacity:.35;cursor:default;filter:grayscale(.6)}
+.defs-stack{display:grid;gap:12px}
+.defs-stack .defrow{border:1px solid rgba(155,77,255,.3);border-radius:12px;padding:12px 14px;background:rgba(10,2,26,.4)}
+.defs-stack .dt{font-size:1.02rem}
+.defs-stack .slot{min-height:46px;min-width:140px}
+.defrow{display:flex;gap:12px;align-items:center;padding:4px 0}
+.defrow .dn{font-family:'Orbitron';font-weight:800;color:var(--cyan);min-width:22px;font-size:1.1rem}
+.defrow .dt{flex:1;font-size:1.18rem;font-weight:600;color:#fff}
+.slot{min-width:150px;min-height:52px;border:2px dashed rgba(0,240,255,.5);border-radius:10px;display:flex;align-items:center;justify-content:center;font-family:'Orbitron';font-size:.82rem;color:var(--ink-dim);padding:6px 10px;text-align:center;cursor:pointer;transition:.15s}
+.slot.over{border-color:var(--pink);background:rgba(255,45,149,.15)}
+.slot.filled{border-style:solid;border-color:var(--pink);color:#fff;background:rgba(255,45,149,.18)}
+.slot.correct{border-color:var(--good);background:rgba(23,240,160,.18);color:#fff}
+.slot.incorrect{border-color:var(--bad);background:rgba(255,77,109,.18);color:#fff}
+.slot small{display:block;color:var(--good);font-size:.7rem;margin-top:3px}
+.hint{font-size:.88rem;color:var(--ink-dim);margin:14px 0 0}
+
+/* buttons / nav */
+.btnrow{display:flex;gap:14px;flex-wrap:wrap;justify-content:center;margin:26px 0}
+.nav{display:flex;justify-content:space-between;gap:12px;margin-top:22px;border-top:1px dashed rgba(0,240,255,.22);padding-top:18px}
+.btn{font-family:'Orbitron';font-weight:800;letter-spacing:.08em;text-transform:uppercase;font-size:1rem;padding:15px 30px;border-radius:999px;border:0;cursor:pointer;transition:.15s;color:#fff}
+.btn.primary{background:linear-gradient(90deg,var(--pink),var(--purple));box-shadow:0 0 22px rgba(255,45,149,.6)}
+.btn.primary:hover{transform:translateY(-2px);box-shadow:0 0 34px rgba(255,45,149,.9)}
+.btn.cyan{background:linear-gradient(90deg,#00b8c4,var(--cyan));color:#06121a;box-shadow:0 0 22px rgba(0,240,255,.5)}
+.btn.cyan:hover{transform:translateY(-2px);box-shadow:0 0 34px rgba(0,240,255,.8)}
+.btn.ghost{background:transparent;border:2px solid var(--pink);color:var(--pink-soft)}
+.btn.ghost:hover{background:rgba(255,45,149,.12)}
+.btn:disabled{opacity:.35;cursor:not-allowed;transform:none;box-shadow:none}
+
+/* results */
+#results{scroll-margin-top:20px}
+.scoreboard{text-align:center}
+.bigscore{font-family:'Monoton';font-size:clamp(3rem,16vw,6rem);line-height:1;color:var(--sun1);text-shadow:0 0 10px var(--sun2),0 0 30px var(--sun2),0 0 60px rgba(255,94,138,.6)}
+.grade-label{font-family:'Orbitron';font-weight:800;letter-spacing:.2em;font-size:1.1rem;text-transform:uppercase;margin-top:6px}
+.breakdown{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin:22px 0 6px}
+@media(max-width:600px){.breakdown{grid-template-columns:1fr}}
+.tile{background:rgba(10,2,26,.6);border:1px solid var(--card-edge);border-radius:12px;padding:14px}
+.tile .t{font-family:'Orbitron';font-size:.7rem;letter-spacing:.12em;color:var(--cyan);text-transform:uppercase}
+.tile .v{font-family:'Orbitron';font-weight:900;font-size:2rem;color:#fff;margin-top:4px}
+.tile .v small{font-size:1rem;color:var(--ink-dim)}
+.keyh{font-family:'Orbitron';font-weight:800;color:var(--pink-soft);margin:26px 0 6px;border-top:1px solid rgba(255,45,149,.3);padding-top:18px;font-size:1.05rem;letter-spacing:.08em;text-transform:uppercase}
+.keyq{padding:14px 0;border-top:1px dashed rgba(0,240,255,.18)}
+.keyq:first-of-type{border-top:0}
+.unans{color:var(--bad);font-size:.85rem;font-family:'Orbitron';margin-top:4px}
+.start-info{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin:18px 0}
+@media(max-width:600px){.start-info{grid-template-columns:1fr}}
+.pill{background:rgba(10,2,26,.5);border:1px solid rgba(0,240,255,.3);border-radius:12px;padding:14px;text-align:center}
+.pill .big{font-family:'Monoton';font-size:2rem;color:var(--pink-soft);text-shadow:0 0 12px var(--pink)}
+.pill .cap{font-family:'Orbitron';font-size:.68rem;letter-spacing:.1em;color:var(--cyan);text-transform:uppercase;margin-top:4px}
+.hidden{display:none !important}
+.musicbtn{position:fixed;right:16px;bottom:16px;z-index:30;font-family:'Orbitron';font-weight:700;font-size:.74rem;letter-spacing:.08em;text-transform:uppercase;padding:12px 16px;border-radius:999px;border:1px solid var(--cyan);background:rgba(10,2,26,.82);color:var(--cyan-soft);cursor:pointer;box-shadow:0 0 16px rgba(0,240,255,.4);backdrop-filter:blur(4px)}
+.musicbtn:hover{box-shadow:0 0 22px rgba(0,240,255,.7)}
+.musicbtn.on{background:linear-gradient(90deg,var(--pink),var(--purple));color:#fff;border-color:#fff;box-shadow:0 0 22px rgba(255,45,149,.6);animation:pulse 2s ease-in-out infinite}
+@keyframes pulse{0%,100%{box-shadow:0 0 18px rgba(255,45,149,.5)}50%{box-shadow:0 0 30px rgba(255,45,149,.9)}}
+.foot{text-align:center;color:var(--ink-dim);font-size:.8rem;margin-top:40px;font-family:'Orbitron';letter-spacing:.1em}
+
+@media print{
+  .backdrop,.sun,.grid,.scan{display:none !important}
+  body{background:#fff;color:#111;font-size:12px}
+  .wrap{max-width:100%}
+  .no-print{display:none !important}
+  .card{background:#fff;border:1px solid #bbb;box-shadow:none;break-inside:avoid}
+  h1{color:#c0186a;text-shadow:none}
+  .sub,.kicker{color:#444;text-shadow:none}
+  .section-h,.keyh{color:#111;text-shadow:none}
+  .section-tag{background:#c0186a;box-shadow:none}
+  .opt{border-color:#ccc;background:#fff;break-inside:avoid}
+  .opt .lab{color:#c0186a}
+  .opt.correct{background:#e8fff4;border-color:#0a8}
+  .opt.incorrect{background:#ffecef;border-color:#c33}
+  .slot.correct{background:#e8fff4;border-color:#0a8;color:#111}
+  .slot.incorrect{background:#ffecef;border-color:#c33;color:#111}
+  .bigscore{color:#c0186a;text-shadow:none}
+  textarea.sa{border:1px solid #bbb;color:#111;background:#fff}
+  .youranswer{background:#fff5fa;border-color:#c0186a}
+  .model{background:#f4fbff;border-color:#0aa}
+  .keyq{break-inside:avoid}
+}
+</style>
+</head>
+<body>
+<div class="backdrop"></div><div class="sun"></div><div class="grid"></div><div class="scan"></div>
+
+<div class="wrap">
+  <header>
+    <div class="kicker">Portland State · Fall 2026</div>
+    <h1>MGMT&nbsp;512</h1>
+    <div class="sub">Organizational Management · <b>Practice&nbsp;Test</b></div>
+  </header>
+
+  <!-- START -->
+  <section id="start" class="card">
+    <span class="section-tag">Final Exam Prep</span>
+    <h2 class="section-h">Ready to run the gauntlet?</h2>
+    <p class="section-note">One question at a time. Each attempt randomizes a fresh set — weighted ~70% toward <b>Class 5, 6 &amp; 8</b> (Leading, Decision-Making, Teams, Motivation, Controls &amp; Strategic HR). Answers stay hidden until you submit.</p>
+    <div class="start-info">
+      <div class="pill"><div class="big">20</div><div class="cap">Multiple Choice</div></div>
+      <div class="pill"><div class="big">2</div><div class="cap">Short Answer</div></div>
+      <div class="pill"><div class="big">15</div><div class="cap">Word Match</div></div>
+    </div>
+    <div class="btnrow no-print"><button class="btn primary" onclick="buildTest()">▶ Start Practice Test</button></div>
+  </section>
+
+  <!-- TEST (wizard) -->
+  <div id="test" class="hidden">
+    <div class="progwrap no-print">
+      <div class="progmeta"><span class="pl" id="progLabel">Section 1 · Multiple Choice</span><span class="pc" id="progCount">1 / 37</span></div>
+      <div class="progbar"><div class="progfill" id="progFill"></div></div>
+    </div>
+    <section class="card">
+      <div id="stage"></div>
+      <div class="nav no-print">
+        <button class="btn ghost" id="backBtn" onclick="back()">← Back</button>
+        <button class="btn cyan" id="nextBtn" onclick="next()">Next →</button>
+      </div>
+    </section>
+  </div>
+
+  <!-- RESULTS -->
+  <section id="results" class="card hidden">
+    <div class="scoreboard">
+      <span class="section-tag">Results</span>
+      <div class="bigscore" id="pct">0%</div>
+      <div class="grade-label" id="gradeLabel"></div>
+      <div class="breakdown">
+        <div class="tile"><div class="t">Multiple Choice</div><div class="v"><span id="mcScore">0</span><small>/20</small></div></div>
+        <div class="tile"><div class="t">Word Match</div><div class="v"><span id="matchScore">0</span><small>/15</small></div></div>
+        <div class="tile"><div class="t">Short Answer (self)</div><div class="v"><span id="saScore">0</span><small>/2</small></div></div>
+      </div>
+      <p class="section-note">Below is your full answer key. Check the self-grade box on each short answer you got right.</p>
+    </div>
+    <div class="btnrow no-print">
+      <button class="btn cyan" onclick="window.print()">⬇ Save as PDF</button>
+      <button class="btn primary" onclick="retry()">⟳ New Random Test</button>
+    </div>
+    <div id="answerKey"></div>
+  </section>
+
+  <div class="foot">★ Stay rad. Study hard. ★ MGMT 512 · Based on class slides, Chapters 1–15</div>
+</div>
+
+<button id="musicBtn" class="musicbtn no-print" onclick="toggleMusic()">♪ Play Synthwave</button>
+
+<script>
+/* =================== CONTENT POOLS =================== */
+const MCQ = [
+{g:"focus",q:"In the course, leadership is defined as:",c:"The act of influencing others to work toward a goal",o:["The authority that comes with a management title","The act of influencing others to work toward a goal","Controlling processes so results stay consistent","Setting the organization's objectives and course of action"]},
+{g:"focus",q:"According to the slides, 'Managers leverage tools; leaders leverage ____.'",c:"Tone",o:["Rules","Tone","Budgets","Authority"]},
+{g:"focus",q:"Servant leadership is best characterized by:",c:"Putting employees first and empowering them to reach their goals",o:["Centralizing all decisions with the leader","Putting employees first and empowering them to reach their goals","Using strict rules and formal authority to drive results","Minimizing contact with employees to stay objective"]},
+{g:"focus",q:"The organizational outcome most associated with servant leadership is:",c:"Higher levels of customer service",o:["Lower labor costs","Higher levels of customer service","Faster centralized decisions","Reduced need for communication"]},
+{g:"focus",q:"Path-Goal Theory holds that:",c:"Different situations require different leadership styles",o:["One ideal leadership style fits every situation","Different situations require different leadership styles","Leaders should always use a directive style","Goals should be set without employee input"]},
+{g:"focus",q:"According to the slides, the truest test of a leader is:",c:"How they respond in a time of crisis",o:["How much revenue their team produces","How they respond in a time of crisis","How many direct reports they manage","How long they have held their title"]},
+{g:"focus",q:"Availability bias is the tendency to:",c:"Give more weight to information that is most readily available or recent",o:["Give more weight to information that is most readily available or recent","Continue a failing plan to avoid losing face","Favor information that confirms what you already believe","Judge based on how a choice is worded"]},
+{g:"focus",q:"Confirmation bias occurs when a decision-maker:",c:"Favors information that affirms a preconceived belief",o:["Relies on the most recent news","Favors information that affirms a preconceived belief","Keeps investing in a failing course of action","Draws conclusions from too small a sample"]},
+{g:"focus",q:"Escalation of commitment bias is:",c:"Continuing a failing course of action because of resources already invested",o:["Reacting to how information is framed","Continuing a failing course of action because of resources already invested","Blaming external forces for bad outcomes","Over-relying on readily available data"]},
+{g:"focus",q:"Describing a product as '85% lean beef' rather than '15% fat' is an example of:",c:"Framing bias",o:["Availability bias","Framing bias","Sampling bias","Confirmation bias"]},
+{g:"focus",q:"Attributing your successes to personal ability but your failures to outside forces reflects:",c:"Fundamental attribution bias",o:["Framing bias","Fundamental attribution bias","Escalation of commitment","Availability bias"]},
+{g:"focus",q:"To make better decisions, the slides recommend you should:",c:"Know your decision criteria before you look at the alternatives",o:["Gather every possible option before deciding anything","Know your decision criteria before you look at the alternatives","Always defer the decision to a larger group","Decide quickly to avoid any further analysis"]},
+{g:"focus",q:"A 'team' is defined as:",c:"A cohesive coalition of people working together to achieve mutual goals",o:["Any group of employees in the same department","A cohesive coalition of people working together to achieve mutual goals","A temporary task force with no shared goal","A reporting structure on an org chart"]},
+{g:"focus",q:"The correct order of Tuckman's stages of group development is:",c:"Forming, Storming, Norming, Performing",o:["Storming, Forming, Performing, Norming","Forming, Norming, Storming, Performing","Forming, Storming, Norming, Performing","Norming, Forming, Storming, Performing"]},
+{g:"focus",q:"According to the slides, which element may be the 'keystone' of a cohesive team?",c:"Clear roles and responsibilities",o:["A large budget","Clear roles and responsibilities","A charismatic leader","Frequent reorganizations"]},
+{g:"focus",q:"Psychological safety on a team means:",c:"A climate of dignity and respect where members feel safe to speak up",o:["Guaranteed job security for all members","A climate of dignity and respect where members feel safe to speak up","Avoiding all conflict and disagreement","Keeping performance metrics hidden"]},
+{g:"focus",q:"The slides note that teams that conduct post-mortems are about how much more effective?",c:"25% more effective",o:["5% more effective","25% more effective","50% more effective","90% more effective"]},
+{g:"focus",q:"Per the slides, companies that excel attend to ____ first and strategy second.",c:"People (the creation of teams)",o:["Profit","People (the creation of teams)","Process","Products"]},
+{g:"focus",q:"Individual job performance is described as a function of:",c:"Ability, environment, and motivation",o:["Pay, title, and tenure","Ability, environment, and motivation","Education, age, and personality","Rules, rewards, and punishment"]},
+{g:"focus",q:"Maslow's Hierarchy of Needs is a model of:",c:"Intrinsic motivation",o:["Organizational structure","Intrinsic motivation","Decision-making biases","Financial control"]},
+{g:"focus",q:"McClelland's Acquired Needs Theory identifies needs for:",c:"Achievement, affiliation, and power",o:["Safety, esteem, and belonging","Achievement, affiliation, and power","Autonomy, mastery, and purpose","Pay, recognition, and promotion"]},
+{g:"focus",q:"Removing a negative consequence after a job is done well is called:",c:"Negative reinforcement",o:["Punishment","Negative reinforcement","Extinction","Positive reinforcement"]},
+{g:"focus",q:"Removing rewards that previously followed a negative behavior is called:",c:"Extinction",o:["Negative reinforcement","Extinction","Punishment","Positive reinforcement"]},
+{g:"focus",q:"Which has been shown to have the LARGEST impact on motivation?",c:"Job design",o:["Base salary","Job design","Office location","Job title"]},
+{g:"focus",q:"Giving workers control over how they perform their tasks is called:",c:"Job enrichment",o:["Job specialization","Job enrichment","Job rotation","Job enlargement"]},
+{g:"focus",q:"The four steps of organizational control, in order, are:",c:"Establish standards, measure performance, compare to standards, take corrective action",o:["Plan, organize, lead, control","Establish standards, measure performance, compare to standards, take corrective action","Hire, train, review, reward","Budget, spend, audit, report"]},
+{g:"focus",q:"Which financial statement is a snapshot of a company's assets and liabilities?",c:"Balance sheet",o:["P&L statement","Balance sheet","Cash flow statement","Income statement"]},
+{g:"focus",q:"A P&L statement shows:",c:"Income and expenses for a time period",o:["A snapshot of assets and liabilities","Income and expenses for a time period","Cash received and spent for a time period","Customer satisfaction over time"]},
+{g:"focus",q:"Which of the following is an example of a NON-financial control?",c:"Customer satisfaction, brand rating, and employee turnover",o:["Budgets and financial statements","Customer satisfaction, brand rating, and employee turnover","Revenue per SKU","Cash flow statements"]},
+{g:"focus",q:"Lean is fundamentally about:",c:"Improving efficiency by eliminating waste in the system",o:["Maximizing production regardless of demand","Improving efficiency by eliminating waste in the system","Centralizing all decision-making","Increasing the number of management layers"]},
+{g:"focus",q:"Strategic HR Management (SHRM) should deliver all of the following EXCEPT:",c:"Compensation",o:["Competence","Consequence","Governance","Compensation"]},
+{g:"focus",q:"Succession planning is the process of:",c:"Identifying future members of the top management team",o:["Outsourcing payroll and timekeeping","Identifying future members of the top management team","Setting quarterly sales objectives","Mapping the company's value stream"]},
+{g:"focus",q:"Talent management is best defined as:",c:"Anticipating the need for human capital and devising a plan to meet demands",o:["Processing payroll and benefits accurately","Anticipating the need for human capital and devising a plan to meet demands","Eliminating waste from HR processes","Setting the organization's mission and vision"]},
+{g:"focus",q:"The '9-Box' grid is a tool used to assess employees on:",c:"Performance and potential",o:["Salary and tenure","Performance and potential","Age and experience","Attendance and punctuality"]},
+{g:"focus",q:"Situational / behavioral interview questions ask a candidate to:",c:"Describe how they handled real situations in the past",o:["Predict hypothetical future outcomes","Describe how they handled real situations in the past","Rate their own personality traits","Explain the company's mission"]},
+{g:"early",q:"Management is best defined as:",c:"The art of getting things done through other people",o:["The art of getting things done through other people","Controlling costs to maximize short-term profit","Designing the organization's reporting structure","Writing the company's mission statement"]},
+{g:"early",q:"Which of the following is NOT one of the four functions in the POLC framework?",c:"Positioning",o:["Planning","Organizing","Positioning","Controlling"]},
+{g:"early",q:"The Triple Bottom Line measures performance by:",c:"Profit, People, and Planet",o:["Price, Product, and Place","Profit, People, and Planet","Plan, Process, and People","Profit, Productivity, and Pace"]},
+{g:"early",q:"In becoming a learning organization, which step do the slides call KEY?",c:"Transferring knowledge",o:["Systematic problem solving","Experimentation","Transferring knowledge","Learning from the past"]},
+{g:"early",q:"Research cited in the slides suggests employees with ____ personalities tend to have stronger careers.",c:"Proactive",o:["Introverted","Proactive","Agreeable","Cautious"]},
+{g:"early",q:"The two work attitudes that most influence how we behave at work are:",c:"Job satisfaction and organizational commitment",o:["Pay and job title","Job satisfaction and organizational commitment","Personality and intelligence","Age and tenure"]},
+{g:"early",q:"Roughly what share of in-person communication comes from non-verbal cues?",c:"About 55%",o:["About 10%","About 25%","About 55%","About 90%"]},
+{g:"early",q:"The slides note the human brain processes images about how much faster than text?",c:"About 60,000 times faster",o:["About 10 times faster","About 100 times faster","About 1,000 times faster","About 60,000 times faster"]},
+{g:"early",q:"A mission statement primarily communicates:",c:"An organization's reason for being and how it serves stakeholders",o:["Where the organization will be in ten years","An organization's reason for being and how it serves stakeholders","The company's quarterly financial targets","The org chart and reporting lines"]},
+{g:"early",q:"A vision statement is best described as:",c:"A future-oriented declaration of purpose and aspirations",o:["A statement of current policies and rules","A future-oriented declaration of purpose and aspirations","A list of measurable annual objectives","A description of the company's products"]},
+{g:"early",q:"Which of the following is NOT one of Porter's Five Forces?",c:"Government regulation",o:["Threat of new entrants","Bargaining power of suppliers","Government regulation","Competitive rivalry"]},
+{g:"early",q:"In the course's SMART acronym, the 'A' stands for:",c:"Aggressive",o:["Attainable","Aggressive","Agreed","Accountable"]},
+{g:"early",q:"Centralization refers to:",c:"The degree to which decision-making authority is concentrated at higher levels",o:["The degree to which rules are written down","The degree to which decision-making authority is concentrated at higher levels","How many products a company offers","How teams are grouped by function"]},
+{g:"early",q:"Compared with tall structures, flat structures typically have:",c:"Fewer management layers and more individual decision-making",o:["More layers and a smaller span of control","Fewer management layers and more individual decision-making","More advancement opportunities","Greater individual support from managers"]},
+{g:"early",q:"Organizational culture is best described as:",c:"The shared values of an organization, formed from the interaction of employees",o:["The written policies and procedures of a firm","The shared values of an organization, formed from the interaction of employees","The company's org chart","The company's annual financial results"]}
+];
+
+const SA = [
+{g:"focus",q:"Describe three decision-making biases covered in class and explain how each can distort a manager's judgment.",
+ model:"Any three of: Availability bias — over-weighting information that is most readily available or recent (e.g., a spike in insurance purchases right after a hurricane). Confirmation bias — seeking or favoring information that affirms a pre-existing belief (e.g., our social media feeds). Escalation of commitment — continuing a failing course of action because of time/money already invested or to save face (e.g., gambling). Framing bias — being swayed by how a choice is presented (85% lean beef vs. 15% fat). Fundamental attribution bias — crediting good outcomes to personal traits but blaming bad ones on external forces. Sampling bias — drawing conclusions from too small a sample. A strong answer names the bias, defines it, and gives an example of the distorted judgment it produces."},
+{g:"focus",q:"What does it take to build a cohesive, high-performing team? Describe at least three practices from class and reference Tuckman's stages.",
+ model:"Teams don't form overnight — they move through Tuckman's stages (Forming, Storming, Norming, Performing), and the leader's role shifts from guiding/directing to leading 'how,' to facilitating, to coaching. Practices to build cohesion include: establishing team norms; building psychological safety (dignity, respect, celebrating differences); clarifying roles & responsibilities (the possible 'keystone'); agreeing on team contracts, decision-making rules, performance metrics, and communication standards; having teammates sit together and get to know each other socially; celebrating wins; and running post-mortems (about 25% more effective). The core takeaway: companies that excel attend to people first (creating teams) and strategy second."},
+{g:"focus",q:"Explain how job design influences motivation, and describe the four types of job design.",
+ model:"Job design has been shown to have the largest impact on motivation. A job should be challenging and fulfilling — too hard and employees give up; too easy and they get bored and stop striving for more. The four types are: Job specialization (breaking tasks down to their simplest components), Job rotation (moving employees from job to job for variety), Job enlargement (expanding a job with more tasks/variety), and Job enrichment (giving workers control over how they perform their tasks). When job design is paired with an effective performance-review process — prior agreed metrics, 360 feedback, employee self-appraisal, praise first — motivation and performance rise, especially when employees help set their own stretch goals."},
+{g:"focus",q:"What is servant leadership, what organizational outcome is associated with it, and how does it differ from a traditional 'boss'?",
+ model:"Servant leadership puts employees first: the leader empowers people, helps them reach their goals, is open with them, feels an obligation to employees, customers, and the community, and will sometimes sacrifice self for the team. The organizational outcome most associated with it is higher levels of customer service. It differs from a traditional boss/manager in that 'managers leverage tools while leaders leverage tone' — a servant leader influences through trust, authenticity, and empowerment rather than formal authority, coercion, or position. A good answer also notes that leaders set the tone and have an oversized impact on culture."},
+{g:"focus",q:"Describe the four steps of organizational control and give one example each of a financial and a non-financial control.",
+ model:"Organizational control is essentially a feedback loop with four steps: (1) establish standards, (2) measure performance, (3) compare performance to the standards, and (4) take corrective action. Controls must be tied to the organization's strategy, or you risk measuring things that don't align with the mission. A financial control example: budgets, P&L / balance sheet / cash-flow statements, or data security/backups. A non-financial control example: customer satisfaction, brand rating, or employee turnover. (Productivity controls like units/hour and quality controls like defect or return rates are also valid categories.)"},
+{g:"early",q:"Why is resistance to change common in organizations, and what are at least two methods you can use as a leader to encourage employees to embrace change?",
+ model:"Resistance is common because change creates uncertainty and people are reluctant to relearn how to do things; change often threatens positions, titles, pay, and routines, so employees may assume change is bad. From the successful change-management steps, name at least two methods: create a clear vision for the change; communicate the plan proactively; develop a sense of urgency (people must see a need or value); build a coalition of opinion leaders; engage employees in planning to create buy-in; support employees; create and celebrate small wins; eliminate obstacles; publicize success; and embrace continuous change. The overall mindset is to build resilience, not resistance."},
+{g:"early",q:"How does organizational culture influence overall performance? Provide one example of how culture can be an asset and one example of how it can become a liability.",
+ model:"Culture — the shared values of an organization — tells employees what the organization values and how to navigate decision-making, and it is often a more powerful way of controlling behavior than formal rules; a strong culture frequently leads to improved performance. Asset example: a strong, trusting culture makes employees more willing to speak up about issues or concerns, improving quality and problem-solving. Liability example: a culture that discourages bad news or punishes dissent can hide problems, suppress innovation, or normalize poor behavior, dragging performance down. Leaders set the tone and have an oversized impact on culture — especially in how they respond to bad news or crises."}
+];
+
+const MATCH_DEFS = [
+{term:"Servant Leadership",def:"A leadership approach that puts employees first and empowers them to reach their goals."},
+{term:"Path-Goal Theory",def:"The idea that different situations require a leader to adopt different leadership styles."},
+{term:"Escalation of Commitment",def:"Continuing a failing course of action because of the time or money already invested."},
+{term:"Framing Bias",def:"Being influenced by the way a situation or problem is presented or worded."},
+{term:"Confirmation Bias",def:"Seeking out and favoring information that affirms a pre-existing belief."},
+{term:"Tuckman's Stages",def:"The Forming-Storming-Norming-Performing model of how groups develop into teams."},
+{term:"Psychological Safety",def:"A team climate of dignity and respect in which members feel safe to speak up."},
+{term:"Extinction",def:"The removal of rewards that previously followed a negative behavior."},
+{term:"Job Enrichment",def:"Giving workers control over how they perform their own tasks."},
+{term:"Lean",def:"Improving efficiency by identifying the value stream and eliminating waste."},
+{term:"Succession Planning",def:"The process of identifying future members of the top management team."},
+{term:"Management",def:"The art of getting things done through other people."},
+{term:"Mission",def:"A statement of an organization's reason for being and how it serves its stakeholders."},
+{term:"Formalization",def:"The extent to which rules, policies, and job descriptions are written and explicit."},
+{term:"Triple Bottom Line",def:"Evaluating organizational performance by profit, people, and planet."}
+];
+const MATCH_DECOYS = ["Availability Bias","Balanced Scorecard","Centralization","Job Rotation","Need for Achievement","Negative Reinforcement","Nominal Group Technique","Organizational Commitment","Quality Controls","Talent Management"];
+
+/* =================== ENGINE =================== */
+let test=null;
+function shuffle(a){a=a.slice();for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}return a;}
+function sample(arr,n){return shuffle(arr).slice(0,n);}
+function esc(s){return String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");}
+const LET=["A","B","C","D"];
+
+function buildTest(){
+  const focusMC=MCQ.filter(q=>q.g==="focus"), earlyMC=MCQ.filter(q=>q.g==="early");
+  const picked=shuffle(sample(focusMC,14).concat(sample(earlyMC,6)));
+  const mc=picked.map(q=>({q:q.q,correct:q.c,options:shuffle(q.o),chosen:null}));
+  const sa=sample(SA,2).map(s=>({q:s.q,model:s.model,text:"",self:false}));
+  const defs=shuffle(MATCH_DEFS);
+  const terms=MATCH_DEFS.map(d=>d.term).concat(MATCH_DECOYS);
+
+  const steps=[];
+  mc.forEach((_,i)=>steps.push({type:"mc",idx:i}));
+  sa.forEach((_,i)=>steps.push({type:"sa",idx:i}));
+  steps.push({type:"match"});
+
+  test={mc,sa,defs,terms,assign:{},selected:null,step:0,steps,graded:false};
+
+  document.getElementById("start").classList.add("hidden");
+  document.getElementById("results").classList.add("hidden");
+  document.getElementById("test").classList.remove("hidden");
+  renderStep();
+  window.scrollTo({top:0,behavior:"smooth"});
+}
+
+function renderStep(){
+  const s=test.steps[test.step];
+  const stage=document.getElementById("stage");
+  if(s.type==="mc") stage.innerHTML=mcHTML(s.idx);
+  else if(s.type==="sa") stage.innerHTML=saHTML(s.idx);
+  else { stage.innerHTML=matchHTML(); renderBank(); }
+  updateProgress();
+}
+
+function mcHTML(i){
+  const item=test.mc[i];
+  return `<div class="q"><div class="stem">${esc(item.q)}</div><div class="opts">`+
+    item.options.map((op,j)=>`<label class="opt"><input type="radio" name="mc" ${item.chosen===op?"checked":""} onchange="setMC(${i}, this.getAttribute('data-v'))" data-v="${esc(op)}"><span class="lab">${LET[j]}</span><span class="txt">${esc(op)}</span></label>`).join("")+
+    `</div></div>`;
+}
+function saHTML(i){
+  const item=test.sa[i];
+  return `<div class="q"><div class="stem">${esc(item.q)}</div>`+
+    `<textarea class="sa" oninput="setSA(${i}, this.value)" placeholder="Type your answer here...">${esc(item.text||"")}</textarea>`+
+    `<p class="section-note">Tip: 2–4 short paragraphs. You'll self-grade this against a model answer after you submit.</p></div>`;
+}
+function matchHTML(){
+  const rows=test.defs.map((d,i)=>`<div class="defrow"><span class="dn">${i+1}</span><span class="dt">${esc(d.def)}</span>`+
+    `<div class="slot ${test.assign[i]?"filled":""}" id="slot${i}" ondragover="allowDrop(event,${i})" ondragleave="leaveDrop(${i})" ondrop="dropTerm(event,${i})" onclick="slotClick(${i})">${slotLabel(i)}</div></div>`).join("");
+  return `<div class="match-layout"><div><div class="defs-stack">${rows}</div>`+
+    `<p class="hint">Drag a term onto a slot — or tap a term, then tap the slot. Tap a filled slot to send it back. <b>10 terms are decoys and match nothing.</b></p></div>`+
+    `<aside class="bank"><h4>★ Word Box ★</h4><div class="chips" id="bankChips"></div></aside></div>`;
+}
+function slotLabel(i){const t=test.assign[i];return t?esc(t):"drop / tap term";}
+function renderBank(){
+  const used=new Set(Object.values(test.assign));
+  const sorted=test.terms.slice().sort((a,b)=>a.localeCompare(b));
+  const el=document.getElementById("bankChips");
+  if(!el)return;
+  el.innerHTML=sorted.map(t=>{
+    const isUsed=used.has(t), sel=(test.selected===t&&!isUsed)?" sel":"", u=isUsed?" used":"";
+    return `<span class="chip${u}${sel}" draggable="${!isUsed}" data-t="${esc(t)}" ondragstart="dragStart(event,this.getAttribute('data-t'))" onclick="chipClick(this.getAttribute('data-t'))">${esc(t)}</span>`;
+  }).join("");
+}
+function setMC(i,v){test.mc[i].chosen=v;}
+function setSA(i,v){test.sa[i].text=v;}
+
+/* matching interactions */
+function dragStart(e,t){ e.dataTransfer.setData("text/plain",t); test.selected=null; }
+function allowDrop(e,i){ e.preventDefault(); const s=document.getElementById("slot"+i); if(s)s.classList.add("over"); }
+function leaveDrop(i){ const s=document.getElementById("slot"+i); if(s)s.classList.remove("over"); }
+function dropTerm(e,i){ e.preventDefault(); place(i,e.dataTransfer.getData("text/plain")); }
+function chipClick(t){ const used=new Set(Object.values(test.assign)); if(used.has(t))return; test.selected=(test.selected===t)?null:t; renderBank(); }
+function slotClick(i){ if(test.assign[i]){ delete test.assign[i]; test.selected=null; renderStep(); } else if(test.selected){ place(i,test.selected); } }
+function place(i,t){ for(const k in test.assign){ if(test.assign[k]===t) delete test.assign[k]; } test.assign[i]=t; test.selected=null; renderStep(); }
+
+/* navigation */
+function next(){ if(test.step<test.steps.length-1){ test.step++; renderStep(); scrollTop(); } else { submitTest(); } }
+function back(){ if(test.step>0){ test.step--; renderStep(); scrollTop(); } }
+function scrollTop(){ document.getElementById("test").scrollIntoView({behavior:"smooth",block:"start"}); }
+
+function updateProgress(){
+  const s=test.steps[test.step];
+  let txt;
+  if(s.type==="match"){ txt="Section 3 · Word Match"; }
+  else {
+    const label=s.type==="mc"?"Section 1 · Multiple Choice":"Section 2 · Short Answer";
+    const sameType=test.steps.filter(x=>x.type===s.type);
+    const within=sameType.findIndex(x=>x.idx===s.idx)+1;
+    txt=`${label} · ${within} of ${sameType.length}`;
+  }
+  document.getElementById("progLabel").textContent=txt;
+  document.getElementById("progCount").textContent=`${test.step+1} / ${test.steps.length}`;
+  document.getElementById("progFill").style.width=((test.step+1)/test.steps.length*100)+"%";
+  document.getElementById("backBtn").disabled=(test.step===0);
+  const nb=document.getElementById("nextBtn");
+  if(test.step===test.steps.length-1){ nb.textContent="✔ Submit & Score"; nb.classList.remove("ghost"); }
+  else nb.textContent="Next →";
+}
+
+/* =================== GRADING + RESULTS =================== */
+function submitTest(){
+  if(test.graded)return; test.graded=true;
+  let mcCorrect=0; test.mc.forEach(it=>{ if(it.chosen===it.correct) mcCorrect++; });
+  let matchCorrect=0; test.defs.forEach((d,i)=>{ if(test.assign[i]===d.term) matchCorrect++; });
+  test.mcCorrect=mcCorrect; test.matchCorrect=matchCorrect;
+
+  document.getElementById("test").classList.add("hidden");
+  document.getElementById("mcScore").textContent=mcCorrect;
+  document.getElementById("matchScore").textContent=matchCorrect;
+  renderKey();
+  recalc();
+  document.getElementById("results").classList.remove("hidden");
+  window.scrollTo({top:0,behavior:"smooth"});
+}
+
+function renderKey(){
+  let h="";
+  h+=`<h3 class="keyh">Section 1 · Multiple Choice</h3>`;
+  test.mc.forEach((item,i)=>{
+    h+=`<div class="keyq"><div class="stem"><span class="num">${i+1}.</span>${esc(item.q)}</div><div class="opts">`;
+    item.options.forEach((op,j)=>{
+      let cls="opt",mk="";
+      if(op===item.correct){cls+=" correct";mk="✓ correct";}
+      if(item.chosen===op&&op!==item.correct){cls+=" incorrect";mk="✗ your answer";}
+      h+=`<div class="${cls}"><span class="lab">${LET[j]}</span><span class="txt">${esc(op)}</span><span class="mark">${mk}</span></div>`;
+    });
+    if(!item.chosen) h+=`<div class="unans">You left this blank</div>`;
+    h+=`</div></div>`;
+  });
+  h+=`<h3 class="keyh">Section 2 · Short Answer</h3>`;
+  test.sa.forEach((item,i)=>{
+    h+=`<div class="keyq"><div class="stem"><span class="num">${i+1}.</span>${esc(item.q)}</div>`+
+       `<div class="youranswer"><h4>Your answer</h4><div>${esc(item.text||"(blank)")}</div></div>`+
+       `<div class="model"><h4>Model Answer</h4><div>${esc(item.model)}</div>`+
+       `<label class="selfgrade"><input type="checkbox" id="saself${i}" ${item.self?"checked":""} onchange="toggleSelf(${i}, this.checked)"> I got this right (self-grade)</label></div></div>`;
+  });
+  h+=`<h3 class="keyh">Section 3 · Word Match</h3>`;
+  test.defs.forEach((d,i)=>{
+    const ans=test.assign[i], ok=ans===d.term;
+    h+=`<div class="keyq defrow"><span class="dn">${i+1}</span><span class="dt">${esc(d.def)}</span>`+
+       `<div class="slot ${ok?"correct":"incorrect"}">${ans?esc(ans):"(blank)"}`+
+       (ok?"<small>✓</small>":`<small style="color:var(--good)">→ ${esc(d.term)}</small>`)+`</div></div>`;
+  });
+  document.getElementById("answerKey").innerHTML=h;
+}
+function toggleSelf(i,v){ test.sa[i].self=v; recalc(); }
+
+function recalc(){
+  if(!test||!test.graded)return;
+  let saSelf=0; test.sa.forEach(it=>{ if(it.self) saSelf++; });
+  document.getElementById("saScore").textContent=saSelf;
+  const earned=test.mcCorrect+test.matchCorrect+saSelf, total=20+15+2;
+  const pct=Math.round(earned/total*100);
+  document.getElementById("pct").textContent=pct+"%";
+  const gl=document.getElementById("gradeLabel");
+  let label,color;
+  if(pct>=90){label="★ Totally Radical ★";color="var(--good)";}
+  else if(pct>=80){label="Looking Sharp";color="var(--cyan)";}
+  else if(pct>=70){label="Solid Cruise";color="var(--sun1)";}
+  else if(pct>=60){label="Keep Studying";color="var(--pink-soft)";}
+  else{label="Back to the Slides";color="var(--bad)";}
+  gl.textContent=label; gl.style.color=color;
+}
+function retry(){ buildTest(); }
+
+/* =================== SYNTHWAVE ENGINE (Web Audio, generated live) =================== */
+let AC=null,master=null,delayNode=null,musicOn=false,schedTimer=null,nextNoteTime=0,step16=0,noiseBuf=null;
+const BPM=84,SIXTEENTH=60/BPM/4,BAR=60/BPM*4,HALF=60/BPM*2;
+function mtof(m){return 440*Math.pow(2,(m-69)/12);}
+const PROG=[
+  {bass:45,pad:[57,60,64],arp:[57,60,64,69]}, // Am
+  {bass:41,pad:[53,57,60],arp:[53,57,60,65]}, // F
+  {bass:48,pad:[60,64,67],arp:[60,64,67,72]}, // C
+  {bass:43,pad:[55,59,62],arp:[55,59,62,67]}  // G
+];
+function initAudio(){
+  AC=new (window.AudioContext||window.webkitAudioContext)();
+  master=AC.createGain(); master.gain.value=0;
+  const comp=AC.createDynamicsCompressor();
+  comp.threshold.value=-18; comp.ratio.value=4; comp.attack.value=0.004; comp.release.value=0.25;
+  master.connect(comp); comp.connect(AC.destination);
+  delayNode=AC.createDelay(1.0); delayNode.delayTime.value=60/BPM*0.375;
+  const fb=AC.createGain(); fb.gain.value=0.3;
+  const wet=AC.createGain(); wet.gain.value=0.3;
+  delayNode.connect(fb); fb.connect(delayNode); delayNode.connect(wet); wet.connect(master);
+  const n=Math.floor(AC.sampleRate*0.3); noiseBuf=AC.createBuffer(1,n,AC.sampleRate);
+  const d=noiseBuf.getChannelData(0); for(let i=0;i<n;i++) d[i]=Math.random()*2-1;
+}
+function pad(freq,t,dur){
+  const g=AC.createGain();
+  g.gain.setValueAtTime(0,t); g.gain.linearRampToValueAtTime(0.06,t+0.7);
+  g.gain.linearRampToValueAtTime(0.045,t+dur*0.7); g.gain.linearRampToValueAtTime(0,t+dur);
+  const lp=AC.createBiquadFilter(); lp.type="lowpass"; lp.frequency.value=1500;
+  g.connect(lp); lp.connect(master); lp.connect(delayNode);
+  [-7,7].forEach(det=>{const o=AC.createOscillator();o.type="sawtooth";o.frequency.value=freq;o.detune.value=det;o.connect(g);o.start(t);o.stop(t+dur+0.05);});
+}
+function bass(freq,t,dur){
+  const g=AC.createGain();
+  g.gain.setValueAtTime(0,t); g.gain.linearRampToValueAtTime(0.16,t+0.02); g.gain.exponentialRampToValueAtTime(0.0001,t+dur);
+  const lp=AC.createBiquadFilter(); lp.type="lowpass"; lp.frequency.value=650;
+  const o=AC.createOscillator(); o.type="triangle"; o.frequency.value=freq;
+  o.connect(g); g.connect(lp); lp.connect(master); o.start(t); o.stop(t+dur+0.05);
+}
+function pluck(freq,t){
+  const g=AC.createGain();
+  g.gain.setValueAtTime(0,t); g.gain.linearRampToValueAtTime(0.04,t+0.01); g.gain.exponentialRampToValueAtTime(0.0001,t+0.45);
+  const o=AC.createOscillator(); o.type="triangle"; o.frequency.value=freq;
+  o.connect(g); g.connect(master); g.connect(delayNode); o.start(t); o.stop(t+0.5);
+}
+function kick(t){
+  const g=AC.createGain();
+  g.gain.setValueAtTime(0.0001,t); g.gain.exponentialRampToValueAtTime(0.2,t+0.005); g.gain.exponentialRampToValueAtTime(0.0001,t+0.33);
+  const o=AC.createOscillator(); o.type="sine";
+  o.frequency.setValueAtTime(115,t); o.frequency.exponentialRampToValueAtTime(48,t+0.17);
+  o.connect(g); g.connect(master); o.start(t); o.stop(t+0.34);
+}
+function hat(t){
+  const s=AC.createBufferSource(); s.buffer=noiseBuf;
+  const hp=AC.createBiquadFilter(); hp.type="highpass"; hp.frequency.value=7500;
+  const g=AC.createGain();
+  g.gain.setValueAtTime(0.0001,t); g.gain.linearRampToValueAtTime(0.025,t+0.004); g.gain.exponentialRampToValueAtTime(0.0001,t+0.05);
+  s.connect(hp); hp.connect(g); g.connect(master); s.start(t); s.stop(t+0.06);
+}
+function scheduler(){
+  while(nextNoteTime < AC.currentTime+0.12){
+    const bar=Math.floor(step16/16)%4, pos=step16%16, ch=PROG[bar], t=nextNoteTime;
+    if(pos===0){ ch.pad.forEach(m=>pad(mtof(m),t,BAR)); bass(mtof(ch.bass),t,HALF); kick(t); }
+    if(pos===8){ bass(mtof(ch.bass),t,HALF); kick(t); }
+    if(pos%2===0){ const ai=(pos/2)%ch.arp.length; pluck(mtof(ch.arp[ai]+12),t); }
+    if(pos===4||pos===12) hat(t);
+    nextNoteTime+=SIXTEENTH; step16++;
+  }
+}
+function toggleMusic(){
+  const btn=document.getElementById("musicBtn");
+  if(!musicOn){
+    if(!AC) initAudio();
+    if(AC.state==="suspended") AC.resume();
+    musicOn=true; btn.classList.add("on"); btn.textContent="♪ Synthwave On";
+    master.gain.cancelScheduledValues(AC.currentTime);
+    master.gain.setValueAtTime(master.gain.value,AC.currentTime);
+    master.gain.linearRampToValueAtTime(0.34,AC.currentTime+1.2);
+    nextNoteTime=AC.currentTime+0.1; step16=0;
+    schedTimer=setInterval(scheduler,25);
+  } else {
+    musicOn=false; btn.classList.remove("on"); btn.textContent="♪ Play Synthwave";
+    master.gain.cancelScheduledValues(AC.currentTime);
+    master.gain.setValueAtTime(master.gain.value,AC.currentTime);
+    master.gain.linearRampToValueAtTime(0,AC.currentTime+0.6);
+    clearInterval(schedTimer); schedTimer=null;
+  }
+}
+
+/* keyboard: Enter advances during test */
+document.addEventListener("keydown",e=>{
+  if(e.key==="Enter"&&test&&!test.graded&&!document.getElementById("test").classList.contains("hidden")){
+    if(e.target&&e.target.tagName==="TEXTAREA")return;
+    e.preventDefault(); next();
+  }
+});
+</script>
+</body>
+</html>
