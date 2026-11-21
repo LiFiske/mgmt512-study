@@ -297,24 +297,61 @@ const SA = [
  model:"Culture — the shared values of an organization — tells employees what the organization values and how to navigate decision-making, and it is often a more powerful way of controlling behavior than formal rules; a strong culture frequently leads to improved performance. Asset example: a strong, trusting culture makes employees more willing to speak up about issues or concerns, improving quality and problem-solving. Liability example: a culture that discourages bad news or punishes dissent can hide problems, suppress innovation, or normalize poor behavior, dragging performance down. Leaders set the tone and have an oversized impact on culture — especially in how they respond to bad news or crises."}
 ];
 
-const MATCH_DEFS = [
-{term:"Servant Leadership",def:"A leadership approach that puts employees first and empowers them to reach their goals."},
-{term:"Path-Goal Theory",def:"The idea that different situations require a leader to adopt different leadership styles."},
-{term:"Escalation of Commitment",def:"Continuing a failing course of action because of the time or money already invested."},
-{term:"Framing Bias",def:"Being influenced by the way a situation or problem is presented or worded."},
-{term:"Confirmation Bias",def:"Seeking out and favoring information that affirms a pre-existing belief."},
-{term:"Tuckman's Stages",def:"The Forming-Storming-Norming-Performing model of how groups develop into teams."},
-{term:"Psychological Safety",def:"A team climate of dignity and respect in which members feel safe to speak up."},
-{term:"Extinction",def:"The removal of rewards that previously followed a negative behavior."},
-{term:"Job Enrichment",def:"Giving workers control over how they perform their own tasks."},
-{term:"Lean",def:"Improving efficiency by identifying the value stream and eliminating waste."},
-{term:"Succession Planning",def:"The process of identifying future members of the top management team."},
-{term:"Management",def:"The art of getting things done through other people."},
-{term:"Mission",def:"A statement of an organization's reason for being and how it serves its stakeholders."},
-{term:"Formalization",def:"The extent to which rules, policies, and job descriptions are written and explicit."},
-{term:"Triple Bottom Line",def:"Evaluating organizational performance by profit, people, and planet."}
+/* Pool of term/definition pairs. Each attempt draws 15 to match (defs shown) + 15 decoys = 30 words.
+   g:"focus" = Class 5/6/8 (Ch 9,10,12,13,14,15); g:"early" = Class 1-4. */
+const MATCH_POOL = [
+/* ---- FOCUS (Class 5/6/8) ---- */
+{g:"focus",term:"Servant Leadership",def:"A leadership approach that puts employees first and empowers them to reach their goals."},
+{g:"focus",term:"Path-Goal Theory",def:"The idea that different situations require a leader to adopt different leadership styles."},
+{g:"focus",term:"Leadership",def:"The act of influencing others to work toward a goal."},
+{g:"focus",term:"Authenticity",def:"Being genuine and consistent — named alongside trust as a key trait of effective leaders."},
+{g:"focus",term:"Escalation of Commitment",def:"Continuing a failing course of action because of the time or money already invested."},
+{g:"focus",term:"Framing Bias",def:"Being influenced by the way a situation or problem is presented or worded."},
+{g:"focus",term:"Confirmation Bias",def:"Seeking out and favoring information that affirms a pre-existing belief."},
+{g:"focus",term:"Availability Bias",def:"Giving more weight to information that is most readily available or recent."},
+{g:"focus",term:"Fundamental Attribution Bias",def:"Crediting good outcomes to personal traits but blaming bad ones on external forces."},
+{g:"focus",term:"Analysis Paralysis",def:"Over-analyzing a decision to the point that no decision actually gets made."},
+{g:"focus",term:"Team",def:"A cohesive coalition of people working together to achieve mutual goals."},
+{g:"focus",term:"Tuckman's Stages",def:"The Forming-Storming-Norming-Performing model of how groups develop into teams."},
+{g:"focus",term:"Psychological Safety",def:"A team climate of dignity and respect in which members feel safe to speak up."},
+{g:"focus",term:"Post-Mortem",def:"A review held after a project that makes teams roughly 25% more effective."},
+{g:"focus",term:"Team Norms",def:"Agreed-upon standards of behavior that guide how a team operates."},
+{g:"focus",term:"Extinction",def:"The removal of rewards that previously followed a negative behavior."},
+{g:"focus",term:"Negative Reinforcement",def:"The removal of a negative consequence after a job is done well."},
+{g:"focus",term:"Positive Reinforcement",def:"Praise or a reward given after a job is done well."},
+{g:"focus",term:"Job Enrichment",def:"Giving workers control over how they perform their own tasks."},
+{g:"focus",term:"Job Rotation",def:"Moving employees from job to job to add variety."},
+{g:"focus",term:"Job Enlargement",def:"Expanding a job by adding more tasks and variety."},
+{g:"focus",term:"Job Specialization",def:"Breaking tasks down into their simplest components."},
+{g:"focus",term:"Maslow's Hierarchy",def:"A model of intrinsic motivation based on ascending levels of human needs."},
+{g:"focus",term:"Acquired Needs Theory",def:"McClelland's theory of the needs for achievement, affiliation, and power."},
+{g:"focus",term:"Job Design",def:"The element shown to have the largest impact on employee motivation."},
+{g:"focus",term:"Organizational Control",def:"A feedback loop of setting standards, measuring, comparing, and taking corrective action."},
+{g:"focus",term:"Balance Sheet",def:"A snapshot of a company's assets and liabilities."},
+{g:"focus",term:"P&L Statement",def:"A statement showing income and expenses for a time period."},
+{g:"focus",term:"Cash Flow Statement",def:"A statement showing cash received and spent for a time period."},
+{g:"focus",term:"Lean",def:"Improving efficiency by identifying the value stream and eliminating waste."},
+{g:"focus",term:"Nonfinancial Controls",def:"Measures such as customer satisfaction, brand rating, and employee turnover."},
+{g:"focus",term:"Succession Planning",def:"The process of identifying future members of the top management team."},
+{g:"focus",term:"Talent Management",def:"Anticipating the need for human capital and devising a plan to meet demand."},
+{g:"focus",term:"9-Box Grid",def:"A tool that assesses employees on both performance and potential."},
+{g:"focus",term:"Behavioral Interviewing",def:"Asking candidates to describe how they handled real situations in the past."},
+/* ---- EARLY (Class 1-4) ---- */
+{g:"early",term:"Management",def:"The art of getting things done through other people."},
+{g:"early",term:"POLC Framework",def:"The four functions of management: planning, organizing, leading, and controlling."},
+{g:"early",term:"Triple Bottom Line",def:"Evaluating organizational performance by profit, people, and planet."},
+{g:"early",term:"Learning Organization",def:"An organization skilled at creating, acquiring, and transferring knowledge."},
+{g:"early",term:"Mission",def:"A statement of an organization's reason for being and how it serves its stakeholders."},
+{g:"early",term:"Vision",def:"A future-oriented declaration of an organization's purpose and aspirations."},
+{g:"early",term:"Centralization",def:"The degree to which decision-making authority is concentrated at higher levels."},
+{g:"early",term:"Formalization",def:"The extent to which rules, policies, and job descriptions are written and explicit."},
+{g:"early",term:"Balanced Scorecard",def:"A tool translating mission, vision, and strategy into specific quantifiable goals."},
+{g:"early",term:"SMART Goals",def:"Objectives that are specific, measurable, aggressive, realistic, and time-bound."},
+{g:"early",term:"Porter's Five Forces",def:"A framework analyzing buyers, suppliers, substitutes, new entrants, and rivalry."},
+{g:"early",term:"Organizational Culture",def:"The shared values of an organization, formed from the interaction of employees."},
+{g:"early",term:"Nominal Group Technique",def:"A silent-brainstorm method for generating many ideas from a group quickly."},
+{g:"early",term:"Organizational Commitment",def:"A work attitude reflecting attachment and loyalty to one's organization."}
 ];
-const MATCH_DECOYS = ["Availability Bias","Balanced Scorecard","Centralization","Job Rotation","Need for Achievement","Negative Reinforcement","Nominal Group Technique","Organizational Commitment","Quality Controls","Talent Management"];
 
 /* =================== ENGINE =================== */
 let test=null;
@@ -328,8 +365,14 @@ function buildTest(){
   const picked=shuffle(sample(focusMC,14).concat(sample(earlyMC,6)));
   const mc=picked.map(q=>({q:q.q,correct:q.c,options:shuffle(q.o),chosen:null}));
   const sa=sample(SA,2).map(s=>({q:s.q,model:s.model,text:"",self:false}));
-  const defs=shuffle(MATCH_DEFS);
-  const terms=MATCH_DEFS.map(d=>d.term).concat(MATCH_DECOYS);
+  // Word match: draw 15 to match (11 focus + 4 early) + 15 decoys (11 focus + 4 early) = 30 words
+  const mFocus=MATCH_POOL.filter(d=>d.g==="focus"), mEarly=MATCH_POOL.filter(d=>d.g==="early");
+  const activeF=sample(mFocus,11), activeE=sample(mEarly,4);
+  const defs=shuffle(activeF.concat(activeE)); // 15 {term,def}
+  const usedTerms=new Set(defs.map(d=>d.term));
+  const decoyF=sample(mFocus.filter(d=>!usedTerms.has(d.term)),11);
+  const decoyE=sample(mEarly.filter(d=>!usedTerms.has(d.term)),4);
+  const terms=defs.map(d=>d.term).concat(decoyF.map(d=>d.term),decoyE.map(d=>d.term)); // 30
 
   const steps=[];
   mc.forEach((_,i)=>steps.push({type:"mc",idx:i}));
@@ -370,7 +413,7 @@ function matchHTML(){
   const rows=test.defs.map((d,i)=>`<div class="defrow"><span class="dn">${i+1}</span><span class="dt">${esc(d.def)}</span>`+
     `<div class="slot ${test.assign[i]?"filled":""}" id="slot${i}" ondragover="allowDrop(event,${i})" ondragleave="leaveDrop(${i})" ondrop="dropTerm(event,${i})" onclick="slotClick(${i})">${slotLabel(i)}</div></div>`).join("");
   return `<div class="match-layout"><div><div class="defs-stack">${rows}</div>`+
-    `<p class="hint">Drag a term onto a slot — or tap a term, then tap the slot. Tap a filled slot to send it back. <b>10 terms are decoys and match nothing.</b></p></div>`+
+    `<p class="hint">Drag a term onto a slot — or tap a term, then tap the slot. Tap a filled slot to send it back. <b>15 of the 30 terms are decoys and match nothing.</b></p></div>`+
     `<aside class="bank"><h4>★ Word Box ★</h4><div class="chips" id="bankChips"></div></aside></div>`;
 }
 function slotLabel(i){const t=test.assign[i];return t?esc(t):"drop / tap term";}
