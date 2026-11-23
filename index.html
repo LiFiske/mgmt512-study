@@ -76,9 +76,13 @@ textarea.sa:focus{outline:none;border-color:var(--pink);box-shadow:0 0 14px rgba
 
 /* matching */
 .match-layout{display:grid;grid-template-columns:1fr 260px;gap:18px}
-@media(max-width:720px){.match-layout{grid-template-columns:1fr}}
-.bank{position:sticky;top:84px;align-self:start;background:rgba(10,2,26,.6);border:1px solid var(--card-edge);border-radius:14px;padding:14px}
-.bank h4{margin:0 0 10px;font-family:'Orbitron';font-size:.78rem;letter-spacing:.14em;color:var(--pink-soft);text-transform:uppercase;text-align:center}
+@media(max-width:720px){.match-layout{grid-template-columns:1fr}.bank{order:-1;top:70px;max-height:40vh}}
+.bank{position:sticky;top:84px;align-self:start;max-height:calc(100vh - 110px);overflow-y:auto;overflow-x:hidden;background:rgba(10,2,26,.6);border:1px solid var(--card-edge);border-radius:14px;padding:14px}
+.bank::-webkit-scrollbar{width:10px}
+.bank::-webkit-scrollbar-track{background:rgba(0,0,0,.25);border-radius:8px}
+.bank::-webkit-scrollbar-thumb{background:linear-gradient(var(--cyan),var(--pink));border-radius:8px}
+.bank{scrollbar-width:thin;scrollbar-color:var(--pink) rgba(0,0,0,.25)}
+.bank h4{position:sticky;top:-14px;margin:-14px -14px 10px;padding:12px 0 8px;background:rgba(16,4,34,.97);border-bottom:1px solid rgba(0,240,255,.2);border-radius:13px 13px 0 0;font-family:'Orbitron';font-size:.78rem;letter-spacing:.14em;color:var(--pink-soft);text-transform:uppercase;text-align:center;z-index:2}
 .chips{display:flex;flex-wrap:wrap;gap:8px}
 .chip{font-family:'Orbitron';font-weight:600;font-size:.76rem;padding:7px 11px;border-radius:999px;cursor:grab;user-select:none;background:linear-gradient(90deg,rgba(0,240,255,.16),rgba(155,77,255,.16));border:1px solid var(--cyan);color:var(--cyan-soft);transition:.15s;box-shadow:0 0 8px rgba(0,240,255,.15)}
 .chip:hover{box-shadow:0 0 14px rgba(0,240,255,.5)}
@@ -357,6 +361,12 @@ const MATCH_POOL = [
 let test=null;
 function shuffle(a){a=a.slice();for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}return a;}
 function sample(arr,n){return shuffle(arr).slice(0,n);}
+/* draw n from pool, preferring items whose .term is NOT in `avoid`; fall back to avoided only if short */
+function drawPref(pool,n,avoid){
+  const pref=shuffle(pool.filter(d=>!avoid.has(d.term)));
+  const rest=shuffle(pool.filter(d=>avoid.has(d.term)));
+  return pref.concat(rest).slice(0,n);
+}
 function esc(s){return String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");}
 const LET=["A","B","C","D"];
 
@@ -365,13 +375,16 @@ function buildTest(){
   const picked=shuffle(sample(focusMC,14).concat(sample(earlyMC,6)));
   const mc=picked.map(q=>({q:q.q,correct:q.c,options:shuffle(q.o),chosen:null}));
   const sa=sample(SA,2).map(s=>({q:s.q,model:s.model,text:"",self:false}));
-  // Word match: draw 15 to match (11 focus + 4 early) + 15 decoys (11 focus + 4 early) = 30 words
+  // Word match: 15 to match + 15 decoys (30 words), ~70% focus, avoiding overlap with the drawn MCQs.
+  // A pool term counts as "covered" if its name appears anywhere in the chosen MCQs' text.
+  const mcBlob=mc.map(q=>q.q+" "+q.options.join(" ")).join(" ").toLowerCase();
+  const covered=new Set(MATCH_POOL.filter(d=>mcBlob.includes(d.term.toLowerCase())).map(d=>d.term));
   const mFocus=MATCH_POOL.filter(d=>d.g==="focus"), mEarly=MATCH_POOL.filter(d=>d.g==="early");
-  const activeF=sample(mFocus,11), activeE=sample(mEarly,4);
+  const activeF=drawPref(mFocus,11,covered), activeE=drawPref(mEarly,4,covered);
   const defs=shuffle(activeF.concat(activeE)); // 15 {term,def}
   const usedTerms=new Set(defs.map(d=>d.term));
-  const decoyF=sample(mFocus.filter(d=>!usedTerms.has(d.term)),11);
-  const decoyE=sample(mEarly.filter(d=>!usedTerms.has(d.term)),4);
+  const decoyF=drawPref(mFocus.filter(d=>!usedTerms.has(d.term)),11,covered);
+  const decoyE=drawPref(mEarly.filter(d=>!usedTerms.has(d.term)),4,covered);
   const terms=defs.map(d=>d.term).concat(decoyF.map(d=>d.term),decoyE.map(d=>d.term)); // 30
 
   const steps=[];
